@@ -1,18 +1,27 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-DB_PATH = "data/olist.db"
-FAISS_INDEX_PATH = "data/faiss.index"
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).parent.parent
 
-DATA_DIR = os.path.join(BASE_DIR,"data/raw")
-DB_DIR = os.path.join(BASE_DIR,"data/DB/olist.db")
+DATA_DIR = BASE_DIR / "data/raw"
+DB_DIR = BASE_DIR / "data/DB/olist.db"
 
+
+VECTORSTORE_DIR  = BASE_DIR / "vectorstore"
+INDEX_PATH = VECTORSTORE_DIR / "faiss.index"
+FAISS_INDEX_PATH = INDEX_PATH
+CHUNKS_PATH = VECTORSTORE_DIR / "chunks.pkl"
+METADATA_PATH = VECTORSTORE_DIR / "metadata.pkl"
+
+CHUNK_WORDS   = 200
+OVERLAP_WORDS = 30
+MODEL_NAME    = "sentence-transformers/all-MiniLM-L6-v2"
 
 
 
