@@ -23,6 +23,6 @@ CHUNK_WORDS   = 200
 OVERLAP_WORDS = 30
 MODEL_NAME    = "sentence-transformers/all-MiniLM-L6-v2"
 
-
+LLM = "gpt-4o-mini"
 
 

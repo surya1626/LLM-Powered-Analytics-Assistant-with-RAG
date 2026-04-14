@@ -8,7 +8,7 @@ import logging
 import textwrap
 from pathlib import Path
 from typing import List, Dict
-from src.config import CHUNK_WORDS,CHUNKS_PATH,OVERLAP_WORDS,MODEL_NAME,METADATA_PATH,INDEX_PATH,FAISS_INDEX_PATH,VECTORSTORE_DIR
+from config import CHUNK_WORDS,CHUNKS_PATH,OVERLAP_WORDS,MODEL_NAME,METADATA_PATH,INDEX_PATH,FAISS_INDEX_PATH,VECTORSTORE_DIR
 import numpy as np
 
 logger = logging.getLogger(__name__)

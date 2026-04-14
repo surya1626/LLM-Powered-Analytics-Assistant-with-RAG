@@ -276,9 +276,13 @@ class OlistDataLoader:
         logger.info("Analytics view created")
 
     def run(self):
+        if self.db_path.exists():
+            logger.info(f"Database already exists at {self.db_path}")
+            return self.db_path
         self.load_all_to_sqlite()
         logger.info("🎉 Data ingestion completed successfully!")
         self.conn.close()
+        return self.db_path
 
 
 if __name__ == "__main__":
