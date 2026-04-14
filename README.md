@@ -106,7 +106,6 @@ The app will automatically ingest the CSVs into SQLite and build the FAISS index
 
 ## ⚠️ Known Issues
 
-- `SentimentAnalyser` and `Synthesizer` are currently commented out in `load_system()` — RAG and Hybrid routes will raise a `KeyError` until they are re-enabled
 - First launch may take 1–3 minutes to ingest CSVs and build the FAISS index (cached after first run)
 
 ---
