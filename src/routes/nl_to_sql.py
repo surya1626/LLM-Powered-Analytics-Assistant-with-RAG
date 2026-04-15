@@ -34,8 +34,14 @@ import os
 import re
 import logging
 import sqlite3
+import sys
 from pathlib import Path
-from config import LLM, OPENAI_API_KEY
+
+# Add project root to path
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
+from src.config import LLM, OPENAI_API_KEY
 import pandas as pd
 
 logger = logging.getLogger(__name__)
