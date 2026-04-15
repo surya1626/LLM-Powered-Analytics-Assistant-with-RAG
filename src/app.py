@@ -4,10 +4,17 @@ Streamlit UI — app.py
 """
 
 import os, traceback
+import sys
+from pathlib import Path
 import streamlit as st
 import pandas as pd
-from config import DATA_DIR, OPENAI_API_KEY,DB_DIR
-from ingest import OlistDataLoader
+
+# Add project root to path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
+from src.config import DATA_DIR, OPENAI_API_KEY, DB_DIR
+from src.ingest import OlistDataLoader
 
 try:
     from dotenv import load_dotenv; load_dotenv()

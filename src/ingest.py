@@ -4,7 +4,13 @@ import sqlite3
 import os
 import numpy as np
 import sys
-from config import DATA_DIR, DB_DIR, GOOGLE_DRIVE_FOLDER_ID
+from pathlib import Path
+
+# Add project root to path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
+from src.config import DATA_DIR, DB_DIR, GOOGLE_DRIVE_FOLDER_ID
 
 logger = logging.getLogger(__name__)
 
@@ -87,13 +93,32 @@ def download_csv_files_from_gdrive(output_dir: str = None) -> bool:
 
 class OlistDataLoader:
     def __init__(self, data_dir: str, db_path: str):
-        self.data_dir = data_dir
-        self.db_path = db_path
+        self.data_dir = str(data_dir)
+        self.db_path = str(db_path)
+        
+        # Create data directory
         os.makedirs(self.data_dir, exist_ok=True)
+        
+        # Create database directory
         db_dir = os.path.dirname(self.db_path)
-        if db_dir:
+        if db_dir and db_dir != '.':
             os.makedirs(db_dir, exist_ok=True)
-        self.conn = sqlite3.connect(self.db_path)
+            os.chmod(db_dir, 0o755)
+        
+        # Remove old database if it exists
+        from pathlib import Path
+        db_path_obj = Path(self.db_path)
+        if db_path_obj.exists():
+            try:
+                db_path_obj.unlink()
+                logger.info(f"Removed existing database: {self.db_path}")
+            except Exception as e:
+                logger.warning(f"Could not delete old database: {e}")
+        
+        # Connect to database with proper settings
+        self.conn = sqlite3.connect(self.db_path, timeout=10, check_same_thread=False)
+        self.conn.execute("PRAGMA journal_mode=WAL")
+        self.conn.commit()
 
     def load_csv(self, file_name: str) -> pd.DataFrame:
         path = os.path.join(self.data_dir, file_name)
@@ -333,10 +358,6 @@ class OlistDataLoader:
         if not download_csv_files_from_gdrive():
             logger.info("Skipping data loader - CSV files not available")
             exit(1)
-        
-        if self.db_path.exists():
-            self.db_path.unlink()
-            logger.info(f"Removed existing database: {self.db_path}")
         
         # Load CSV files into database
         self.load_all_to_sqlite()
