@@ -4,12 +4,10 @@ import sqlite3
 import os
 import numpy as np
 import sys
-from config import DATA_DIR, DB_DIR
+from config import DATA_DIR, DB_DIR, GOOGLE_DRIVE_FOLDER_ID
 
 logger = logging.getLogger(__name__)
 
-# Google Drive folder ID
-GOOGLE_DRIVE_FOLDER_ID = "1OyiJwJGIIwB6Dh2JGAjBLPHkNGI32OOX"
 
 CSV_FILES = [
     "olist_customers_dataset.csv",
