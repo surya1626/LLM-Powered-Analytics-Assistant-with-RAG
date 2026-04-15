@@ -2,6 +2,8 @@
 
 An LLM-powered analytics chatbot built on the [Brazilian E-Commerce (Olist) dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce). Ask questions in plain English — the system routes them to SQL queries, RAG-based review analysis, or a hybrid of both.
 
+🌐 **Live Demo:** [https://llm-powered-analytics-assistant-with-rag-cscvddddv5zdntz3yre6.streamlit.app/](https://llm-powered-analytics-assistant-with-rag-cscvddddv5zdntz3yre6.streamlit.app/)
+
 ---
 
 ## 🚀 Features
