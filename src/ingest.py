@@ -3,9 +3,13 @@ import pandas as pd
 import sqlite3
 import os
 import numpy as np
+import sys
 from config import DATA_DIR, DB_DIR
 
 logger = logging.getLogger(__name__)
+
+# Google Drive folder ID
+GOOGLE_DRIVE_FOLDER_ID = "1OyiJwJGIIwB6Dh2JGAjBLPHkNGI32OOX"
 
 CSV_FILES = [
     "olist_customers_dataset.csv",
@@ -30,6 +34,57 @@ TABLE_MAP = {
     "olist_sellers_dataset": "sellers",
     "product_category_name_translation": "category_translation",
 }
+
+
+def download_csv_files_from_gdrive(output_dir: str = None) -> bool:
+    """
+    Download CSV files from Google Drive folder.
+    
+    Returns:
+        bool: True if files were downloaded or already exist, False if download failed
+    """
+    if output_dir is None:
+        output_dir = str(DATA_DIR)
+    
+    from pathlib import Path
+    
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    
+    # Check if files already exist
+    csv_files = list(output_path.glob("*.csv"))
+    if len(csv_files) >= len(CSV_FILES):
+        logger.info(f"✅ CSV files already exist in {output_dir}")
+        return True
+    
+    logger.info(f"📁 Data directory: {output_path}")
+    logger.info(f"⏳ Downloading {len(CSV_FILES)} CSV files from Google Drive...")
+    
+    try:
+        import gdown
+    except ImportError:
+        logger.error("❌ gdown library not installed.")
+        logger.error("   Install it with: pip install gdown")
+        return False
+    
+    try:
+        gdown.download_folder(
+            id=GOOGLE_DRIVE_FOLDER_ID,
+            output=output_dir,
+            quiet=False,
+            use_cookies=False
+        )
+        
+        # Verify download
+        csv_files = list(output_path.glob("*.csv"))
+        logger.info(f"✅ Download completed! Found {len(csv_files)} CSV files:")
+        for f in sorted(csv_files):
+            logger.info(f"   • {f.name}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Download failed: {e}")
+        return False
 
 
 class OlistDataLoader:
@@ -276,9 +331,16 @@ class OlistDataLoader:
         logger.info("Analytics view created")
 
     def run(self):
+        # Download CSV files first
+        if not download_csv_files_from_gdrive():
+            logger.info("Skipping data loader - CSV files not available")
+            exit(1)
+        
         if self.db_path.exists():
-            logger.info(f"Database already exists at {self.db_path}")
-            return self.db_path
+            self.db_path.unlink()
+            logger.info(f"Removed existing database: {self.db_path}")
+        
+        # Load CSV files into database
         self.load_all_to_sqlite()
         logger.info("🎉 Data ingestion completed successfully!")
         self.conn.close()
@@ -286,8 +348,9 @@ class OlistDataLoader:
 
 
 if __name__ == "__main__":
+    # Load CSV files into database
     loader = OlistDataLoader(
-        data_dir = DATA_DIR,
-        db_path = DB_DIR
+        data_dir = str(DATA_DIR),
+        db_path = str(DB_DIR)
     )
     loader.run()

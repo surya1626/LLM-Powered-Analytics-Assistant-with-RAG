@@ -48,6 +48,7 @@ def load_system():
     from routes.synthesizer import Synthesizer
     from routes.sentiment import SentimentAnalyser
     db_path = setup_database()
+    print(f"\n✅ Database ready at: {db_path}")
     index, chunks = build_faiss_index(db_path)
 
     return {
